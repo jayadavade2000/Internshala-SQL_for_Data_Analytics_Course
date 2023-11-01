@@ -70,7 +70,8 @@ SELECT * FROM matches WHERE result = 'tie' ORDER BY date DESC;
 SELECT COUNT(DISTINCT city) FROM matches;
 
 /*11.	Create table deliveries_v02 with all the columns of the table ‘deliveries’ and 
-an additional column ball_result containing values boundary, dot or other depending on the total_run (boundary for >= 4, dot for 0 and other for any other number)
+an additional column ball_result containing values boundary, 
+dot or other depending on the total_run (boundary for >= 4, dot for 0 and other for any other number)
 (Hint 1 : CASE WHEN statement is used to get condition based results)
 (Hint 2: To convert the output data of select statement into a table, you can use a subquery. 
 Create table table_name as [entire select statement].)*/
@@ -89,7 +90,8 @@ SELECT ball_result,
 COUNT(*) FROM deliveries_v02
 GROUP BY ball_result;
 
---13.Write a query to fetch the total number of boundaries scored by each team from the deliveries_v02 table and order it in descending order of the number of boundaries scored.
+/*13.Write a query to fetch the total number of boundaries scored by each team from the deliveries_v02 table 
+and order it in descending order of the number of boundaries scored.*/
 SELECT batting_team, COUNT(*)
 FROM deliveries_v02
 WHERE ball_result='boundary'
@@ -117,7 +119,8 @@ GROUP BY bowler
 ORDER BY maximum_extra_runs DESC
 LIMIT 5;
 
---17.Write a query to create a table named deliveries_v03 with all the columns of deliveries_v02 table and two additional column (named venue and match_date) of venue and date from table matches
+/*17.Write a query to create a table named deliveries_v03 with all the columns of deliveries_v02 table and 
+two additional column (named venue and match_date) of venue and date from table matches*/
 CREATE TABLE deliveries_v03 AS SELECT a.* , b.venue , b.match_date
 FROM deliveries_v02 AS a
 LEFT JOIN(SELECT MAX(venue) AS venue ,MAX(date) AS match_date, id FROM matches GROUP BY id) AS b
@@ -139,7 +142,8 @@ ORDER BY runs DESC;
 
 /*20.Get unique team1 names from the matches table, 
 you will notice that there are two entries for Rising Pune Supergiant one with Rising Pune Supergiant and another one with Rising Pune Supergiants.  
-Your task is to create a matches_corrected table with two additional columns team1_corr and team2_corr containing team names with replacing Rising Pune Supergiants with Rising Pune Supergiant. 
+Your task is to create a matches_corrected table with two additional columns team1_corr and team2_corr containing team names 
+with replacing Rising Pune Supergiants with Rising Pune Supergiant. 
 Now analyse these newly created columns.*/
 SELECT DISTINCT team1 FROM matches;
 
@@ -163,10 +167,13 @@ SELECT * FROM deliveries_v04;
 SELECT COUNT(id) - COUNT(DISTINCT ball_id) FROM deliveries_v04; 
 
 /*23.SQL Row_Number() function is used to sort and assign row numbers to data rows in the presence of multiple groups. 
-For example, to identify the top 10 rows which have the highest order amount in each region, we can use row_number to assign row numbers in each group (region) with any particular order (decreasing order of order amount) and then we can use this new column to apply filters. 
+For example, to identify the top 10 rows which have the highest order amount in each region, 
+we can use row_number to assign row numbers in each group (region)
+with any particular order (decreasing order of order amount) and then we can use this new column to apply filters. 
 Using this knowledge, solve the following exercise. 
 You can use hints to create an additional column of row number.
-Create table deliveries_v05 with all columns of deliveries_v04 and an additional column for row number partition over ball_id. (HINT : Syntax to add along with other columns,  row_number() over (partition by ball_id) as r_num)*/
+Create table deliveries_v05 with all columns of deliveries_v04 and an additional column for row number partition over ball_id. 
+(HINT : Syntax to add along with other columns,  row_number() over (partition by ball_id) as r_num)*/
 
 CREATE TABLE deliveries_v05 AS SELECT * ,
 row_number() OVER (PARTITION BY ball_id) AS r_num
@@ -175,5 +182,6 @@ FROM deliveries_v04;
 --24.Use the r_num created in deliveries_v05 to identify instances where ball_id is repeating. (HINT : select * from deliveries_v05 WHERE r_num=2;)
 SELECT * FROM deliveries_v05 WHERE r_num=2;
 
---25.Use subqueries to fetch data of all the ball_id which are repeating. (HINT: SELECT * FROM deliveries_v05 WHERE ball_id in (select BALL_ID from deliveries_v05 WHERE r_num=2);
+/*25.Use subqueries to fetch data of all the ball_id which are repeating. 
+(HINT: SELECT * FROM deliveries_v05 WHERE ball_id in (select BALL_ID from deliveries_v05 WHERE r_num=2);*/
 SELECT * FROM deliveries_v05 WHERE ball_id IN (SELECT BALL_ID FROM deliveries_v05 WHERE r_num=2);
